@@ -34,6 +34,13 @@ def main() -> None:
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(ENTRY)
+    # Read back and confirm the file on disk is byte-exact, so a partial
+    # or mangled write can never pass as a valid entry.
+    with open(path, "r", encoding="utf-8", newline="") as f:
+        written = f.read()
+    if written != ENTRY:
+        raise SystemExit("gate failed: entry.txt on disk differs from ENTRY")
+    gate(written)
     print(f"wrote {len(ENTRY)} characters to {path}")
 
 
